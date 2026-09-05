@@ -5,6 +5,7 @@ export const clothVertexShader = /* glsl */ `
   uniform float uWind;
   varying vec2 vUv;
   varying float vStress;
+  varying vec3 vWorldPosition;
   varying vec3 vWorldNormal;
 
   void main() {
@@ -19,6 +20,7 @@ export const clothVertexShader = /* glsl */ `
     transformed.y += uLayerOffset;
 
     vec4 worldPosition = modelMatrix * vec4(transformed, 1.0);
+    vWorldPosition = worldPosition.xyz;
     vWorldNormal = normalize(mat3(modelMatrix) * normal);
     vStress = clamp(uStress * (0.62 + abs(wrinkle) * 0.5), 0.0, 1.0);
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
@@ -31,10 +33,11 @@ export const clothFragmentShader = /* glsl */ `
   uniform float uOpacity;
   varying vec2 vUv;
   varying float vStress;
+  varying vec3 vWorldPosition;
   varying vec3 vWorldNormal;
 
   void main() {
-    vec3 viewDirection = normalize(cameraPosition - vWorldNormal);
+    vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
     float grazing = pow(1.0 - abs(dot(normalize(vWorldNormal), normalize(viewDirection))), 3.0);
     float weave = 0.94 + 0.06 * sin(vUv.x * 260.0) * sin(vUv.y * 180.0);
     vec3 base = uColor * weave;

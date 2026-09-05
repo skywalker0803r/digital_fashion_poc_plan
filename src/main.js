@@ -50,10 +50,13 @@ geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(vertexCou
 const uvs = geometry.attributes.uv.array;
 for (let index = 0; index < vertexCount; index += 1) { uvs[index * 2] = (index % simulation.columns) / (simulation.columns - 1); uvs[index * 2 + 1] = Math.floor(index / simulation.columns) / (simulation.rows - 1); }
 geometry.setIndex(indices);
+simulation.writeToGeometry(geometry);
+geometry.computeBoundingSphere();
 for (const config of layerConfig) {
   const uniforms = createClothUniforms({ color: new THREE.Color(config.color), sheenColor: new THREE.Color(config.sheen), opacity: config.opacity, layerOffset: config.layerOffset });
   const material = new THREE.ShaderMaterial({ uniforms, vertexShader: clothVertexShader, fragmentShader: clothFragmentShader, transparent: config.opacity < 1, side: THREE.DoubleSide });
   const mesh = new THREE.Mesh(geometry.clone(), material);
+  mesh.frustumCulled = false;
   mesh.name = `${config.name} layer`;
   scene.add(mesh);
   layers.push({ mesh, uniforms, config });
