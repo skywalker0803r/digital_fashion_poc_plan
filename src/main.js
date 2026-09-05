@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import GUI from 'dat.gui';
+import * as dat from 'dat.gui';
 import * as ort from 'onnxruntime-web';
 import { clothFragmentShader, clothVertexShader, createClothUniforms } from './shaders/ClothMaterialShader.js';
 import { ClothSimulation } from './clothSimulation.js';
@@ -69,7 +69,7 @@ const head = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 16), new THREE.Mes
 head.position.set(0, 1.72, -0.43); avatar.add(head);
 scene.add(avatar);
 
-const gui = new GUI({ width: 285 });
+const gui = new dat.GUI({ width: 285 });
 const physicsFolder = gui.addFolder('PHYSICS');
 physicsFolder.add(settings, 'gravity', -20, 0, 0.1).name('Gravity');
 physicsFolder.add(settings, 'windSpeed', 0, 5, 0.1).name('Wind Speed');
